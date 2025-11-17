@@ -43,8 +43,9 @@ Final Project/
 - **Incident intelligence**:
   `/incidents/analytics/*` outputs status/type/priority summaries & clusters, and `/incidents/recommendations/nearest-responders` mocks responder proximity rankings for agency dashboards.
 - **Seed script**: `python scripts/seed.py --admin-email admin@example.com --admin-password Secure123!` populates default roles and a bootstrap admin account.
+- **External provider hooks**: configure ENV vars (`AI_PROVIDER`, `AI_ENDPOINT`, `AI_API_KEY`, `NOTIFICATION_EMAIL_ENABLED`, `NOTIFICATION_EMAIL_FROM`, `NOTIFICATION_SMS_ENABLED`) to integrate third-party AI and comms services; by default, stubs log to the console for visibility.
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
-  Heuristic classifier/severity scorer, event logging, in-app notifications with unread tracking, and admin broadcast support.
+  AI classification can call an external provider (`AI_PROVIDER`) or fall back to heuristics, severity/confidence are stored, in-app/email/SMS notifications are supported with unread tracking and admin broadcast, and audit logs capture key events.
 - **Admin summary endpoint** (`backend/app/routers/admin.py`):
   Provides per-agency metric snapshot for dashboards.
 - **Testing**: `pytest app/tests/test_health.py` ensures the service boots (install `pytest` locally).

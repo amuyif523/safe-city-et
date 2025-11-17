@@ -45,6 +45,9 @@ Use this document to configure, run, and validate the whole stack locally.
    python scripts/seed.py --admin-email admin@example.com --admin-password ChangeMe123
    ```
    This creates default roles and a super admin account.
+6. **Optional integrations**:
+   - Set `AI_PROVIDER=external` (with `AI_ENDPOINT` and `AI_API_KEY`) to call a remote NLP service; otherwise heuristics are used.
+   - Toggle email/SMS delivery via `NOTIFICATION_EMAIL_ENABLED`, `NOTIFICATION_EMAIL_FROM`, and `NOTIFICATION_SMS_ENABLED`. By default these adapters log to the console for observability.
 5. **Run the API locally**:
    ```bash
    uvicorn app.main:app --reload --port 8000

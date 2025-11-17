@@ -17,6 +17,7 @@ class NotificationBroadcast(BaseModel):
     channel: str = "in_app"
     payload: dict | None = None
     target_roles: list[str] | None = None
+    channels: list[str] | None = None  # e.g., ["in_app", "email"]
 
 
 class NotificationSummary(BaseModel):

@@ -66,20 +66,24 @@ def broadcast_notification(
             .distinct()
         )
     recipients = query.all()
+    channels = broadcast_in.channels or [broadcast_in.channel]
+    delivered = 0
     for user in recipients:
-        notification_service.create_notification(
-            db,
-            user_id=user.id,
-            message=broadcast_in.message,
-            event_type=broadcast_in.event_type,
-            channel=broadcast_in.channel,
-            payload=broadcast_in.payload,
-        )
+        for channel in channels:
+            notification_service.create_notification(
+                db,
+                user_id=user.id,
+                message=broadcast_in.message,
+                event_type=broadcast_in.event_type,
+                channel=channel,
+                payload=broadcast_in.payload,
+            )
+            delivered += 1
     audit.log_event(
         db,
         action="notification_broadcast",
         actor_id=current_user.id,
         target_type="notification",
-        details=f"Recipients: {len(recipients)}, event: {broadcast_in.event_type}",
+        details=f"Recipients: {len(recipients)}, events sent: {delivered}",
     )
-    return {"recipients": len(recipients)}
+    return {"recipients": len(recipients), "messages_sent": delivered}

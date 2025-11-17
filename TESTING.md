@@ -76,10 +76,11 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
    {
      "message": "City-wide drill tonight at 9PM.",
      "event_type": "broadcast",
-     "target_roles": ["police", "fire"]
+     "target_roles": ["police", "fire"],
+     "channels": ["in_app", "email"]
    }
    ```
-   - Re-login as role-based users to confirm they receive the alert.
+   - Re-login as role-based users to confirm they receive the alert; check backend logs for email/SMS dispatch output when those channels are enabled.
 
 ### 2.5 Audit Visibility
 1. `GET /audit/logs` (admin token) → ensure records exist for signup/login/broadcast actions.

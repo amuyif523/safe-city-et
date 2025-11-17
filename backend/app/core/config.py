@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     ]
     rate_limit_login_attempts: int = 5
     rate_limit_window_seconds: int = 300
+    ai_provider: str = Field("heuristic", alias="AI_PROVIDER")  # heuristic | external
+    ai_endpoint: str | None = Field(None, alias="AI_ENDPOINT")
+    ai_api_key: str | None = Field(None, alias="AI_API_KEY")
+    notification_email_enabled: bool = Field(False, alias="NOTIFICATION_EMAIL_ENABLED")
+    notification_email_from: str | None = Field(None, alias="NOTIFICATION_EMAIL_FROM")
+    notification_sms_enabled: bool = Field(False, alias="NOTIFICATION_SMS_ENABLED")
 
     class Config:
         env_file = ".env"

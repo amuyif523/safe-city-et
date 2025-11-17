@@ -22,6 +22,7 @@ const NotificationBroadcastForm = () => {
   const [message, setMessage] = useState("");
   const [eventType, setEventType] = useState("broadcast");
   const [targetRoles, setTargetRoles] = useState<string[]>([]);
+  const [channels, setChannels] = useState<string[]>(["in_app"]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(
     null
@@ -32,14 +33,17 @@ const NotificationBroadcastForm = () => {
     setIsSubmitting(true);
     setFeedback(null);
     try {
+      const activeChannels = channels.length ? channels : ["in_app"];
       await apiClient.post("/notifications/broadcast", {
         message,
         event_type: eventType,
         target_roles: targetRoles.length ? targetRoles : null,
+        channels: activeChannels,
       });
       setFeedback({ type: "success", text: "Broadcast sent successfully." });
       setMessage("");
       setTargetRoles([]);
+      setChannels(["in_app"]);
     } catch {
       setFeedback({ type: "error", text: "Failed to send broadcast." });
     } finally {
@@ -86,6 +90,27 @@ const NotificationBroadcastForm = () => {
                     prev.includes(role.value)
                       ? prev.filter((value) => value !== role.value)
                       : [...prev, role.value]
+                  )
+                }
+              />
+            ))}
+          </Stack>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="#8ba3c7">
+            Channels
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+            {["in_app", "email", "sms"].map((channel) => (
+              <Chip
+                key={channel}
+                label={channel.toUpperCase()}
+                color={channels.includes(channel) ? "primary" : "default"}
+                onClick={() =>
+                  setChannels((prev) =>
+                    prev.includes(channel)
+                      ? prev.filter((value) => value !== channel)
+                      : [...prev, channel]
                   )
                 }
               />
