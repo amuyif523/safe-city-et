@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database import Base, engine
-from app.routers import admin, auth, health, incidents, notifications, users
+from app.routers import admin, audit, auth, health, incidents, notifications, users
 
 
 def create_application() -> FastAPI:
@@ -31,6 +31,7 @@ def create_application() -> FastAPI:
     app.include_router(
         notifications.router, prefix="/notifications", tags=["notifications"]
     )
+    app.include_router(audit.router)
     return app
 
 

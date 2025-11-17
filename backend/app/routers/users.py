@@ -7,6 +7,7 @@ from app.core.deps import SessionDep, get_current_user, require_roles
 from app.core.security import get_password_hash
 from app.models.user import Role, User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
+from app.services import audit
 
 router = APIRouter()
 
@@ -31,9 +32,12 @@ def list_users(db: SessionDep):
 
 
 @router.post(
-    "/", response_model=UserRead, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_roles("admin", "super_admin"))]
+    "/",
+    response_model=UserRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
-def create_user(user_in: UserCreate, db: SessionDep):
+def create_user(user_in: UserCreate, db: SessionDep, current_user=Depends(get_current_user)):
     if db.query(User).filter_by(email=user_in.email).first():
         raise HTTPException(status_code=400, detail="Email already used.")
     user = User(
@@ -47,6 +51,14 @@ def create_user(user_in: UserCreate, db: SessionDep):
     db.add(user)
     db.commit()
     db.refresh(user)
+    audit.log_event(
+        db,
+        action="user_created",
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=user.id,
+        details=f"Roles: {', '.join(role_names)}",
+    )
     return user
 
 
@@ -55,18 +67,34 @@ def create_user(user_in: UserCreate, db: SessionDep):
     response_model=UserRead,
     dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
-def update_user(user_id: int, user_in: UserUpdate, db: SessionDep):
+def update_user(
+    user_id: int,
+    user_in: UserUpdate,
+    db: SessionDep,
+    current_user=Depends(get_current_user),
+):
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
+    changes = []
     for field, value in user_in.model_dump(exclude_unset=True).items():
         if field == "roles" and value:
             user.roles = _assign_roles(db, value)
+            changes.append("roles")
         else:
             setattr(user, field, value)
+            changes.append(field)
     db.add(user)
     db.commit()
     db.refresh(user)
+    audit.log_event(
+        db,
+        action="user_updated",
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=user.id,
+        details=f"Fields: {', '.join(changes) if changes else 'none'}",
+    )
     return user
 
 
@@ -75,10 +103,17 @@ def update_user(user_id: int, user_in: UserUpdate, db: SessionDep):
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
-def disable_user(user_id: int, db: SessionDep):
+def disable_user(user_id: int, db: SessionDep, current_user=Depends(get_current_user)):
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     user.is_active = False
     db.add(user)
     db.commit()
+    audit.log_event(
+        db,
+        action="user_disabled",
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=user_id,
+    )

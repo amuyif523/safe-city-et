@@ -3,6 +3,7 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 
 import AdminIncidentPanel from "../../components/AdminIncidentPanel";
+import AuditLogPanel from "../../components/AuditLogPanel";
 import IncidentAnalyticsPanel from "../../components/IncidentAnalyticsPanel";
 import NotificationBroadcastForm from "../../components/NotificationBroadcastForm";
 import StatCard from "../../components/StatCard";
@@ -132,6 +133,10 @@ const AdminPortal = () => {
           isLoading={usersLoading}
           onToggleActive={toggleUserActive}
         />
+      </Box>
+
+      <Box mt={3}>
+        <AuditLogPanel />
       </Box>
     </Box>
   );

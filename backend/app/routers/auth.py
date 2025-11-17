@@ -8,6 +8,7 @@ from app.database import get_session
 from app.models.user import Role, User
 from app.schemas import auth as auth_schema
 from app.schemas.user import UserCreate, UserRead
+from app.services import audit
 
 router = APIRouter()
 
@@ -38,6 +39,14 @@ def signup(user_in: UserCreate, db: Session = Depends(get_session)):
     db.add(user)
     db.commit()
     db.refresh(user)
+    audit.log_event(
+        db,
+        action="user_signup",
+        actor_id=user.id,
+        target_type="user",
+        target_id=user.id,
+        details=f"Roles: {', '.join(role_names)}",
+    )
     return user
 
 
@@ -53,6 +62,13 @@ def login(
         raise HTTPException(status_code=400, detail="Incorrect email or password.")
 
     token = security.create_access_token(str(user.id))
+    audit.log_event(
+        db,
+        action="user_login",
+        actor_id=user.id,
+        target_type="user",
+        target_id=user.id,
+    )
     return auth_schema.Token(access_token=token)
 
 

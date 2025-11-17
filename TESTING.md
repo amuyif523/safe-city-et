@@ -70,8 +70,8 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 1. `GET /notifications` (citizen token) → expect status update notification.
 2. `GET /notifications/summary` → confirms unread count.
 3. `POST /notifications/{notification_id}/read` → unread count decreases.
-2. `GET /admin/summary` (admin token) → see counts for users/incidents.
-3. `POST /notifications/broadcast` (admin token)
+4. `GET /admin/summary` (admin token) → see counts for users/incidents.
+5. `POST /notifications/broadcast` (admin token)
    ```json
    {
      "message": "City-wide drill tonight at 9PM.",
@@ -81,11 +81,16 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
    ```
    - Re-login as role-based users to confirm they receive the alert.
 
-### 2.5 Error Cases
+### 2.5 Audit Visibility
+1. `GET /audit/logs` (admin token) → ensure records exist for signup/login/broadcast actions.
+2. Filter logs: `GET /audit/logs?action=notification_broadcast`.
+3. Export check: call `/audit/logs?size=100&page=1` and confirm payload matches UI export.
+
+### 2.6 Error Cases
 1. Try accessing `/incidents` without token → expect 401.
 2. Try `PATCH /incidents/{id}` as public user → expect 403.
 
-### 2.6 Intelligence & Analytics
+### 2.7 Intelligence & Analytics
 1. `GET /incidents/analytics/overview` (admin token) → verify counts by status/type/priority and average severity.
 2. `GET /incidents/analytics/clusters` → ensure clusters reflect geocoded incidents.
 3. `GET /incidents/recommendations/nearest-responders?latitude=9.01&longitude=38.74` → expect prioritized responder list.
@@ -120,7 +125,12 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 2. Police portal “Nearest Responders” widget updates when incidents include coordinates.
 3. Admin portal “Intelligence Snapshot” reflects analytics API output.
 
-### 3.6 Mobile Responsiveness
+### 3.6 Audit Log Viewer
+1. Open the Admin portal and scroll to the Audit Logs panel.
+2. Filter by action (e.g., `notification_broadcast`) and verify the table updates.
+3. Use “Export JSON” to download current results; inspect the file to ensure entries match the API response.
+
+### 3.7 Mobile Responsiveness
 1. Use browser dev tools to simulate smaller screens and confirm layout adjusts (stat cards stack, map/table widths shrink).
 
 ---

@@ -10,7 +10,7 @@ from app.schemas.notification import (
     NotificationRead,
     NotificationSummary,
 )
-from app.services import notifications as notification_service
+from app.services import audit, notifications as notification_service
 
 router = APIRouter()
 
@@ -75,4 +75,11 @@ def broadcast_notification(
             channel=broadcast_in.channel,
             payload=broadcast_in.payload,
         )
+    audit.log_event(
+        db,
+        action="notification_broadcast",
+        actor_id=current_user.id,
+        target_type="notification",
+        details=f"Recipients: {len(recipients)}, event: {broadcast_in.event_type}",
+    )
     return {"recipients": len(recipients)}

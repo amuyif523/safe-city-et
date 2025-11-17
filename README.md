@@ -37,6 +37,8 @@ Final Project/
   Role association table and decorator-based enforcement for admin, agency, and citizen scopes.
 - **Incident lifecycle** (`backend/app/routers/incidents.py`):
   Role-aware listing, AI-assisted creation with severity/confidence scoring, analytics endpoints, and admin moderation tools.
+- **Audit visibility** (`backend/app/routers/audit.py`):
+  Admins/super-admins can filter and export audit logs via `/audit/logs`.
 - **Incident intelligence**:
   `/incidents/analytics/*` outputs status/type/priority summaries & clusters, and `/incidents/recommendations/nearest-responders` mocks responder proximity rankings for agency dashboards.
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
@@ -86,7 +88,7 @@ Set `VITE_API_URL` to point at the FastAPI instance when wiring environments.
 | Multi-Agency Dashboards | Done | Dedicated portals for every persona |
 | Admin & Super Admin Controls | Done | Metrics endpoint and admin dashboard scaffolding |
 | Notifications & Communications | In Progress | In-app feed with unread tracking + admin broadcast; external channels next |
-| Audit Logs, Security & Compliance | Planned | Audit model/service live, viewer UI pending |
+| Audit Logs, Security & Compliance | In Progress | Audit logging covers key actions with filterable admin UI |
 | Frontend Infrastructure | Done | Theme, layout, reusable components, responsive grid |
 | DevOps & Deployment | Planned | Roadmap documented below (Docker, CI/CD, monitoring) |
 
