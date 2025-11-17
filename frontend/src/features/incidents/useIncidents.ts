@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import apiClient from "../../lib/api-client";
 import type { Incident } from "../../types/user";
@@ -11,22 +11,23 @@ const useIncidents = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchIncidents = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await apiClient.get<PaginatedIncidents>("/incidents");
-        setIncidents(data.data);
-      } catch {
-        // swallow errors for initial scaffolding
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    void fetchIncidents();
+  const fetchIncidents = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await apiClient.get<PaginatedIncidents>("/incidents");
+      setIncidents(data.data);
+    } catch {
+      setIncidents([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { incidents, isLoading };
+  useEffect(() => {
+    void fetchIncidents();
+  }, [fetchIncidents]);
+
+  return { incidents, isLoading, refetch: fetchIncidents };
 };
 
 export default useIncidents;
