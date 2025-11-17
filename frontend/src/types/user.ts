@@ -31,6 +31,8 @@ export interface Incident {
   latitude?: number | null;
   longitude?: number | null;
   severity_score?: number | null;
+  reported_by?: User | null;
+  assigned_to?: User | null;
   created_at: string;
   updated_at: string;
 }
