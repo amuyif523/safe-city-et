@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     ]
     rate_limit_login_attempts: int = 5
     rate_limit_window_seconds: int = 300
+    refresh_token_expire_minutes: int = 24 * 60
     ai_provider: str = Field("heuristic", alias="AI_PROVIDER")  # heuristic | external
     ai_endpoint: str | None = Field(None, alias="AI_ENDPOINT")
     ai_api_key: str | None = Field(None, alias="AI_API_KEY")

@@ -28,7 +28,7 @@ const LoginPage = () => {
       const params = new URLSearchParams();
       params.append("username", email);
       params.append("password", password);
-      const { data } = await apiClient.post<{ access_token: string }>(
+      const { data } = await apiClient.post<{ access_token: string; refresh_token?: string }>(
         "/auth/login",
         params,
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
@@ -36,11 +36,17 @@ const LoginPage = () => {
       const profile = await apiClient.get<User>("/auth/me", {
         headers: { Authorization: `Bearer ${data.access_token}` },
       });
-      setAuth({ token: data.access_token, user: profile.data });
+      setAuth({ token: data.access_token, refreshToken: data.refresh_token, user: profile.data });
       const redirectPath = (location.state as any)?.from?.pathname ?? "/";
       navigate(redirectPath, { replace: true });
-    } catch {
-      setError("Invalid credentials.");
+    } catch (err: any) {
+      if (err?.response?.status === 429) {
+        setError("Too many attempts. Please wait before trying again.");
+      } else if (err?.response?.status === 403) {
+        setError(err.response?.data?.detail ?? "Account not authorized.");
+      } else {
+        setError("Invalid credentials.");
+      }
     }
   };
 

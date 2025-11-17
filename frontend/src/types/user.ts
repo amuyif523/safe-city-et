@@ -19,6 +19,9 @@ export interface User {
   phone?: string | null;
   roles: Role[];
   is_active: boolean;
+  is_disabled: boolean;
+  is_suspended: boolean;
+  suspension_reason?: string | null;
 }
 
 export interface Incident {

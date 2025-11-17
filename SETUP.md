@@ -48,6 +48,9 @@ Use this document to configure, run, and validate the whole stack locally.
 6. **Optional integrations**:
    - Set `AI_PROVIDER=external` (with `AI_ENDPOINT` and `AI_API_KEY`) to call a remote NLP service; otherwise heuristics are used.
    - Toggle email/SMS delivery via `NOTIFICATION_EMAIL_ENABLED`, `NOTIFICATION_EMAIL_FROM`, and `NOTIFICATION_SMS_ENABLED`. By default these adapters log to the console for observability.
+7. **Auth security settings** (optional overrides):
+   - `REFRESH_TOKEN_EXPIRE_MINUTES` controls refresh token lifetime (default 24h).
+   - `RATE_LIMIT_LOGIN_ATTEMPTS` & `RATE_LIMIT_WINDOW_SECONDS` throttle failed logins.
 5. **Run the API locally**:
    ```bash
    uvicorn app.main:app --reload --port 8000

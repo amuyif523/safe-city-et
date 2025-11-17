@@ -36,6 +36,8 @@ class User(Base):
     phone: Mapped[str | None] = mapped_column(String(20))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_disabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_suspended: Mapped[bool] = mapped_column(Boolean, default=False)
+    suspension_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )

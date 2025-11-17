@@ -30,6 +30,22 @@ const useUsers = () => {
     [fetchUsers]
   );
 
+  const toggleUserDisabled = useCallback(
+    async (userId: number, isDisabled: boolean) => {
+      await apiClient.patch(`/users/${userId}`, { is_disabled: isDisabled, is_active: !isDisabled });
+      await fetchUsers();
+    },
+    [fetchUsers]
+  );
+
+  const toggleUserSuspended = useCallback(
+    async (userId: number, isSuspended: boolean, suspension_reason?: string | null) => {
+      await apiClient.patch(`/users/${userId}`, { is_suspended: isSuspended, suspension_reason });
+      await fetchUsers();
+    },
+    [fetchUsers]
+  );
+
   useEffect(() => {
     void fetchUsers();
   }, [fetchUsers]);
@@ -40,6 +56,8 @@ const useUsers = () => {
     error,
     refetch: fetchUsers,
     toggleUserActive,
+    toggleUserDisabled,
+    toggleUserSuspended,
   };
 };
 

@@ -82,16 +82,23 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
    ```
    - Re-login as role-based users to confirm they receive the alert; check backend logs for email/SMS dispatch output when those channels are enabled.
 
-### 2.5 Audit Visibility
+### 2.5 Auth Hardening
+1. Call `POST /auth/login` and capture both `access_token` and `refresh_token`.
+2. Immediately call `POST /auth/refresh` with the refresh token → expect new access/refresh tokens.
+3. `POST /auth/request-password-reset` with the citizen email; watch the backend logs for the token output.
+4. `POST /auth/reset-password` with the token and a new password; confirm login works only with the new password and old refresh tokens are invalidated.
+5. Trigger the login rate limit by submitting bad credentials more than `RATE_LIMIT_LOGIN_ATTEMPTS` within the window (default 5 attempts/5 minutes) → expect HTTP 429.
+
+### 2.6 Audit Visibility
 1. `GET /audit/logs` (admin token) → ensure records exist for signup/login/broadcast actions.
 2. Filter logs: `GET /audit/logs?action=notification_broadcast`.
 3. Export check: call `/audit/logs?size=100&page=1` and confirm payload matches UI export.
 
-### 2.6 Error Cases
+### 2.7 Error Cases
 1. Try accessing `/incidents` without token → expect 401.
 2. Try `PATCH /incidents/{id}` as public user → expect 403.
 
-### 2.7 Intelligence & Analytics
+### 2.8 Intelligence & Analytics
 1. `GET /incidents/analytics/overview` (admin token) → verify counts by status/type/priority and average severity.
 2. `GET /incidents/analytics/clusters` → ensure clusters reflect geocoded incidents.
 3. `GET /incidents/recommendations/nearest-responders?latitude=9.01&longitude=38.74` → expect prioritized responder list.
@@ -127,12 +134,17 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 3. Admin portal “Intelligence Snapshot” reflects analytics API output.
 4. Fire portal lists water sources; Medical portal shows hospital load bar charts; Military portal shows threat intel feed.
 
-### 3.6 Audit Log Viewer
+### 3.6 Admin User States
+1. Use the Admin portal to disable a user; they should be unable to log in and the status chips update.
+2. Suspend a user and enter a reason; login attempts should surface the suspension message.
+3. Unsuspend/re-enable from the table to restore access.
+
+### 3.7 Audit Log Viewer
 1. Open the Admin portal and scroll to the Audit Logs panel.
 2. Filter by action (e.g., `notification_broadcast`) and verify the table updates.
 3. Use “Export JSON” to download current results; inspect the file to ensure entries match the API response.
 
-### 3.7 Mobile Responsiveness
+### 3.8 Mobile Responsiveness
 1. Use browser dev tools to simulate smaller screens and confirm layout adjusts (stat cards stack, map/table widths shrink).
 
 ---

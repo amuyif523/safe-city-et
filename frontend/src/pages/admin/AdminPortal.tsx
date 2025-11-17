@@ -35,6 +35,8 @@ const AdminPortal = () => {
     users,
     isLoading: usersLoading,
     toggleUserActive,
+    toggleUserDisabled,
+    toggleUserSuspended,
     refetch: refetchUsers,
   } = useUsers();
   const [statusSaving, setStatusSaving] = useState(false);
@@ -132,6 +134,8 @@ const AdminPortal = () => {
           users={users}
           isLoading={usersLoading}
           onToggleActive={toggleUserActive}
+          onToggleDisabled={toggleUserDisabled}
+          onToggleSuspended={toggleUserSuspended}
         />
       </Box>
 

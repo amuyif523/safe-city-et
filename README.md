@@ -33,7 +33,7 @@ Final Project/
   FastAPI factory with CORS, router registration, JWT settings, and SQLite dev database (override `DATABASE_URL` for Postgres).
 - **Database migrations**: Alembic is configured (`alembic.ini`, `migrations/`); run `alembic upgrade head` to apply schema changes and `alembic revision --autogenerate -m "..."` for future updates.
 - **User management & auth** (`backend/app/routers/auth.py`, `backend/app/core/security.py`):
-  Signup/login/me routes, bcrypt hashing, JWT issuance, plus future-ready refresh endpoint placeholder.
+  Signup/login/me routes, bcrypt hashing, JWT + refresh tokens, login rate limiting, password reset flow, and admin-visible disabled/suspended states.
 - **RBAC** (`backend/app/core/deps.py`, `backend/app/models/user.py`):
   Role association table and decorator-based enforcement for admin, agency, and citizen scopes.
 - **Incident lifecycle** (`backend/app/routers/incidents.py`):
@@ -44,6 +44,7 @@ Final Project/
   `/incidents/analytics/*` outputs status/type/priority summaries & clusters, and `/incidents/recommendations/nearest-responders` mocks responder proximity rankings for agency dashboards.
 - **Seed script**: `python scripts/seed.py --admin-email admin@example.com --admin-password Secure123!` populates default roles and a bootstrap admin account.
 - **External provider hooks**: configure ENV vars (`AI_PROVIDER`, `AI_ENDPOINT`, `AI_API_KEY`, `NOTIFICATION_EMAIL_ENABLED`, `NOTIFICATION_EMAIL_FROM`, `NOTIFICATION_SMS_ENABLED`) to integrate third-party AI and comms services; by default, stubs log to the console for visibility.
+  - Auth ENV additions: `REFRESH_TOKEN_EXPIRE_MINUTES` (optional) and login rate limits (`RATE_LIMIT_LOGIN_ATTEMPTS`, `RATE_LIMIT_WINDOW_SECONDS`).
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
   AI classification can call an external provider (`AI_PROVIDER`) or fall back to heuristics, severity/confidence are stored, in-app/email/SMS notifications are supported with unread tracking and admin broadcast, and audit logs capture key events.
 - **Admin summary endpoint** (`backend/app/routers/admin.py`):

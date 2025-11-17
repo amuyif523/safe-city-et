@@ -108,6 +108,7 @@ def disable_user(user_id: int, db: SessionDep, current_user=Depends(get_current_
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     user.is_active = False
+    user.is_disabled = True
     db.add(user)
     db.commit()
     audit.log_event(
