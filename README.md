@@ -38,7 +38,7 @@ Final Project/
 - **Incident lifecycle** (`backend/app/routers/incidents.py`):
   Role-aware listing, AI-assisted creation, status updates, notifications, and admin delete guard.
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
-  Heuristic classifier/severity scorer, event logging, and in-app notification persistence.
+  Heuristic classifier/severity scorer, event logging, in-app notifications with unread tracking, and admin broadcast support.
 - **Admin summary endpoint** (`backend/app/routers/admin.py`):
   Provides per-agency metric snapshot for dashboards.
 - **Testing**: `pytest app/tests/test_health.py` ensures the service boots (install `pytest` locally).
@@ -83,7 +83,7 @@ Set `VITE_API_URL` to point at the FastAPI instance when wiring environments.
 | AI Intelligence Layer | Planned | Placeholder heuristics in `services/ai.py`, ready for ML drop-in |
 | Multi-Agency Dashboards | Done | Dedicated portals for every persona |
 | Admin & Super Admin Controls | Done | Metrics endpoint and admin dashboard scaffolding |
-| Notifications & Communications | Planned | In-app notifications implemented, external channels to follow |
+| Notifications & Communications | In Progress | In-app feed with unread tracking + admin broadcast; external channels next |
 | Audit Logs, Security & Compliance | Planned | Audit model/service live, viewer UI pending |
 | Frontend Infrastructure | Done | Theme, layout, reusable components, responsive grid |
 | DevOps & Deployment | Planned | Roadmap documented below (Docker, CI/CD, monitoring) |

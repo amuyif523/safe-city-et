@@ -8,11 +8,30 @@ class NotificationCreate(BaseModel):
     channel: str = "in_app"
     message: str
     event_type: str
+    payload: dict | None = None
 
 
-class NotificationRead(NotificationCreate):
+class NotificationBroadcast(BaseModel):
+    message: str
+    event_type: str
+    channel: str = "in_app"
+    payload: dict | None = None
+    target_roles: list[str] | None = None
+
+
+class NotificationSummary(BaseModel):
+    unread: int
+
+
+class NotificationRead(BaseModel):
     id: int
+    user_id: int
+    channel: str
+    message: str
+    event_type: str
+    payload: dict | None = None
     is_read: bool
+    read_at: datetime | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

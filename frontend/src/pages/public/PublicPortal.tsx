@@ -24,6 +24,7 @@ const PublicPortal = () => {
     notifications,
     isLoading: notificationsLoading,
     refetch: refetchNotifications,
+    markAsRead,
   } = useNotifications();
   const [statusFilter, setStatusFilter] = useState<
     "all" | "open" | "acknowledged" | "in_progress" | "resolved"
@@ -86,7 +87,12 @@ const PublicPortal = () => {
 
       <Box mt={3} display="grid" gap={3} gridTemplateColumns={{ xs: "1fr", lg: "1.4fr 1fr" }}>
         <IncidentForm onSuccess={() => void handleRefresh()} />
-        <NotificationsPanel notifications={notifications} isLoading={notificationsLoading} />
+        <NotificationsPanel
+          notifications={notifications}
+          isLoading={notificationsLoading}
+          onRefresh={() => void refetchNotifications()}
+          onMarkRead={(id) => void markAsRead(id)}
+        />
       </Box>
 
       <Box

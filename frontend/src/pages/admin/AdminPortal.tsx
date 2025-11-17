@@ -3,6 +3,7 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 
 import AdminIncidentPanel from "../../components/AdminIncidentPanel";
+import NotificationBroadcastForm from "../../components/NotificationBroadcastForm";
 import StatCard from "../../components/StatCard";
 import UserManagementTable from "../../components/UserManagementTable";
 import apiClient from "../../lib/api-client";
@@ -113,12 +114,19 @@ const AdminPortal = () => {
         </Paper>
       </Box>
 
-      <Box mt={3}>
+      <Box
+        mt={3}
+        display="grid"
+        gap={3}
+        gridTemplateColumns={{ xs: "1fr", lg: "1.5fr 1fr" }}
+        alignItems="flex-start"
+      >
         <UserManagementTable
           users={users}
           isLoading={usersLoading}
           onToggleActive={toggleUserActive}
         />
+        <NotificationBroadcastForm />
       </Box>
     </Box>
   );

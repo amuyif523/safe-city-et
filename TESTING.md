@@ -68,7 +68,18 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 
 ### 2.4 Notifications & Admin Summary
 1. `GET /notifications` (citizen token) → expect status update notification.
+2. `GET /notifications/summary` → confirms unread count.
+3. `POST /notifications/{notification_id}/read` → unread count decreases.
 2. `GET /admin/summary` (admin token) → see counts for users/incidents.
+3. `POST /notifications/broadcast` (admin token)
+   ```json
+   {
+     "message": "City-wide drill tonight at 9PM.",
+     "event_type": "broadcast",
+     "target_roles": ["police", "fire"]
+   }
+   ```
+   - Re-login as role-based users to confirm they receive the alert.
 
 ### 2.5 Error Cases
 1. Try accessing `/incidents` without token → expect 401.
@@ -94,7 +105,9 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 2. Log in as a user with `police` role → `/police` dashboard should load with map/table filtered to police incidents.
 
 ### 3.4 Notifications Panel
-1. After status updates, check the Notifications panel on the Public portal (hard-coded + API data).
+1. After status updates/broadcasts, check the Notifications panel and top-bar dropdown.
+2. Use the dropdown “Mark all read” control and confirm the unread badge clears.
+3. In the citizen portal, mark individual notifications read via the panel buttons.
 
 ### 3.5 Mobile Responsiveness
 1. Use browser dev tools to simulate smaller screens and confirm layout adjusts (stat cards stack, map/table widths shrink).
@@ -123,7 +136,7 @@ npm run build
 | --- | --- |
 | Login button spins forever | Ensure backend is running and `VITE_API_URL` matches backend origin. |
 | 500 errors on signup | Keep passwords ≤72 characters and install `bcrypt==4.0.1` to avoid passlib/bcrypt mismatch. |
-| Blank frontend screen | Means user isn’t authenticated; use `/login`. Already fixed by auth store update. |
+| Notifications badge doesn’t update | Refresh via gear icon or ensure backend `/notifications` endpoints are reachable. |
 | CORS errors | Confirm APIs are accessed via the same host defined in backend CORS settings. |
 
 ---
