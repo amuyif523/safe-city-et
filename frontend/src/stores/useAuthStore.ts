@@ -18,7 +18,7 @@ const tokenFromStorage =
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: tokenFromStorage,
   user: null,
-  isInitializing: true,
+  isInitializing: Boolean(tokenFromStorage),
   setAuth: ({ token, user }) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("safe_city_token", token);
