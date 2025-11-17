@@ -1,15 +1,18 @@
 import { Box, Typography } from "@mui/material";
 
 import CommandCenterMap from "../../components/CommandCenterMap";
+import FireResourcePanel from "../../components/FireResourcePanel";
 import IncidentTable from "../../components/IncidentTable";
 import StatCard from "../../components/StatCard";
 import useIncidents from "../../features/incidents/useIncidents";
+import useFireResources from "../../features/incidents/useFireResources";
 
 const FirePortal = () => {
   const { incidents } = useIncidents();
   const fireIncidents = incidents.filter(
     (incident) => incident.incident_type === "fire"
   );
+  const { resources } = useFireResources();
 
   return (
     <Box>
@@ -28,8 +31,9 @@ const FirePortal = () => {
       <Box mt={3}>
         <CommandCenterMap incidents={fireIncidents} />
       </Box>
-      <Box mt={3}>
+      <Box mt={3} display="grid" gap={3} gridTemplateColumns={{ xs: "1fr", lg: "1fr 1fr" }}>
         <IncidentTable incidents={fireIncidents} />
+        <FireResourcePanel resources={resources} />
       </Box>
     </Box>
   );

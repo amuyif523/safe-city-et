@@ -1,15 +1,18 @@
 import { Box, Typography } from "@mui/material";
 
 import CommandCenterMap from "../../components/CommandCenterMap";
+import HospitalLoadPanel from "../../components/HospitalLoadPanel";
 import IncidentTable from "../../components/IncidentTable";
 import StatCard from "../../components/StatCard";
 import useIncidents from "../../features/incidents/useIncidents";
+import useHospitalLoad from "../../features/incidents/useHospitalLoad";
 
 const MedicalPortal = () => {
   const { incidents } = useIncidents();
   const medicalIncidents = incidents.filter(
     (incident) => incident.incident_type === "medical"
   );
+  const { hospitalLoad, isLoading } = useHospitalLoad();
 
   return (
     <Box>
@@ -29,8 +32,9 @@ const MedicalPortal = () => {
       <Box mt={3}>
         <CommandCenterMap incidents={medicalIncidents} />
       </Box>
-      <Box mt={3}>
+      <Box mt={3} display="grid" gap={3} gridTemplateColumns={{ xs: "1fr", lg: "1fr 1fr" }}>
         <IncidentTable incidents={medicalIncidents} />
+        <HospitalLoadPanel hospitals={hospitalLoad} isLoading={isLoading} />
       </Box>
     </Box>
   );

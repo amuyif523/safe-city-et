@@ -25,6 +25,16 @@ RESPONDER_DIRECTORY = [
     {"id": 3, "name": "Black Lion Hospital", "role": "medical", "latitude": 9.019, "longitude": 38.75},
     {"id": 4, "name": "National Defense Unit", "role": "military", "latitude": 9.05, "longitude": 38.78},
 ]
+FIRE_WATER_SOURCES = [
+    {"name": "Bole Water Reservoir", "latitude": 8.99, "longitude": 38.78, "capacity_liters": 500000},
+    {"name": "Mexico Square Hydrant", "latitude": 9.01, "longitude": 38.74, "capacity_liters": 120000},
+    {"name": "Piassa Underground Tank", "latitude": 9.04, "longitude": 38.74, "capacity_liters": 300000},
+]
+HOSPITAL_LOAD = [
+    {"name": "Black Lion Hospital", "capacity": 120, "occupied": 95},
+    {"name": "St. Paul Hospital", "capacity": 90, "occupied": 60},
+    {"name": "Myungsung Christian Medical Center", "capacity": 75, "occupied": 40},
+]
 
 
 def _filter_query_for_user(query, user) -> Session:
@@ -271,3 +281,33 @@ def nearest_responders(latitude: float, longitude: float, limit: int = 3):
         ),
     )
     return responders[:limit]
+
+
+@router.get(
+    "/analytics/hospital-load",
+    dependencies=[
+        Depends(require_roles("medical", "admin", "super_admin"))
+    ],
+)
+def hospital_load():
+    data = []
+    for entry in HOSPITAL_LOAD:
+        capacity = entry["capacity"]
+        occupied = entry["occupied"]
+        data.append(
+            {
+                "name": entry["name"],
+                "capacity": capacity,
+                "occupied": occupied,
+                "load_percentage": round((occupied / capacity) * 100, 2) if capacity else 0,
+            }
+        )
+    return data
+
+
+@router.get(
+    "/analytics/fire-water-sources",
+    dependencies=[Depends(require_roles("fire", "admin", "super_admin"))],
+)
+def fire_water_sources():
+    return FIRE_WATER_SOURCES

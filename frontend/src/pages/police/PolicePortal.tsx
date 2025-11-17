@@ -1,10 +1,13 @@
 import { Box, Paper, Typography } from "@mui/material";
 
 import CommandCenterMap from "../../components/CommandCenterMap";
+import DispatchQueuePanel from "../../components/DispatchQueuePanel";
 import IncidentTable from "../../components/IncidentTable";
 import StatCard from "../../components/StatCard";
 import useIncidents from "../../features/incidents/useIncidents";
 import useNearestResponders from "../../features/incidents/useNearestResponders";
+import useIncidentClusters from "../../features/incidents/useIncidentClusters";
+import HotspotPanel from "../../components/HotspotPanel";
 
 const PolicePortal = () => {
   const { incidents } = useIncidents();
@@ -15,6 +18,11 @@ const PolicePortal = () => {
     (incident) => incident.latitude && incident.longitude
   );
   const { responders } = useNearestResponders(latestLocation?.latitude, latestLocation?.longitude);
+  const { clusters } = useIncidentClusters();
+  const dispatchQueue = policeIncidents
+    .filter((incident) => incident.status !== "resolved")
+    .sort((a, b) => (b.severity_score ?? 0) - (a.severity_score ?? 0))
+    .slice(0, 5);
 
   return (
     <Box>
@@ -58,6 +66,11 @@ const PolicePortal = () => {
             )}
           </Paper>
         </Box>
+      </Box>
+
+      <Box mt={3} display="grid" gap={3} gridTemplateColumns={{ xs: "1fr", lg: "1fr 1fr" }}>
+        <DispatchQueuePanel incidents={dispatchQueue} />
+        <HotspotPanel clusters={clusters} />
       </Box>
     </Box>
   );

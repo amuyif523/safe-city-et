@@ -125,6 +125,7 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 1. Public/Police tables display severity scores and confidence percentages.
 2. Police portal “Nearest Responders” widget updates when incidents include coordinates.
 3. Admin portal “Intelligence Snapshot” reflects analytics API output.
+4. Fire portal lists water sources; Medical portal shows hospital load bar charts; Military portal shows threat intel feed.
 
 ### 3.6 Audit Log Viewer
 1. Open the Admin portal and scroll to the Audit Logs panel.
