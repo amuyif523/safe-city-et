@@ -34,6 +34,7 @@ Use this document to configure, run, and validate the whole stack locally.
 4. **Initialize the database**:
    - On first run FastAPI auto-creates tables when `AUTO_CREATE_SCHEMA=true`.
    - For Postgres, ensure the database exists and update `DATABASE_URL` accordingly (`postgresql+psycopg://user:pass@host:5432/dbname`).
+   - If you set up the database before the latest schema changes (notifications payloads, incident intelligence columns), drop the SQLite file or run migrations before restarting the API.
 5. **Run the API locally**:
    ```bash
    uvicorn app.main:app --reload --port 8000

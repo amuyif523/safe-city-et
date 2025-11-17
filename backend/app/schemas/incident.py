@@ -9,14 +9,13 @@ from app.schemas.user import UserRead
 class IncidentBase(BaseModel):
     title: str
     description: str
-    incident_type: str | None = None
     priority: str = Field(default="medium", pattern="^(low|medium|high)$")
     latitude: float | None = None
     longitude: float | None = None
 
 
 class IncidentCreate(IncidentBase):
-    pass
+    incident_type: str | None = None  # optional manual override
 
 
 class IncidentUpdate(BaseModel):
@@ -33,6 +32,9 @@ class IncidentRead(IncidentBase):
     id: int
     status: str
     severity_score: int | None = None
+    incident_type: str
+    incident_type_confidence: float | None = None
+    ai_metadata: dict | None = None
     reported_by: UserRead | None = None
     assigned_to: UserRead | None = None
     created_at: datetime

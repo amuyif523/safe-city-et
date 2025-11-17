@@ -3,11 +3,13 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 
 import AdminIncidentPanel from "../../components/AdminIncidentPanel";
+import IncidentAnalyticsPanel from "../../components/IncidentAnalyticsPanel";
 import NotificationBroadcastForm from "../../components/NotificationBroadcastForm";
 import StatCard from "../../components/StatCard";
 import UserManagementTable from "../../components/UserManagementTable";
 import apiClient from "../../lib/api-client";
 import useAdminSummary from "../../features/admin/useAdminSummary";
+import useIncidentAnalytics from "../../features/incidents/useIncidentAnalytics";
 import useIncidents from "../../features/incidents/useIncidents";
 import useUsers from "../../features/users/useUsers";
 import type { Incident } from "../../types/user";
@@ -23,6 +25,11 @@ const AdminPortal = () => {
     isLoading: incidentsLoading,
     refetch: refetchIncidents,
   } = useIncidents();
+  const {
+    analytics,
+    isLoading: analyticsLoading,
+    refetch: refetchAnalytics,
+  } = useIncidentAnalytics();
   const {
     users,
     isLoading: usersLoading,
@@ -42,7 +49,7 @@ const AdminPortal = () => {
   };
 
   const handleRefreshAll = async () => {
-    await Promise.all([refetchSummary(), refetchIncidents(), refetchUsers()]);
+    await Promise.all([refetchSummary(), refetchIncidents(), refetchUsers(), refetchAnalytics()]);
   };
 
   const criticalIncidents = useMemo(
@@ -81,18 +88,8 @@ const AdminPortal = () => {
         <StatCard label="Active Incidents" value={summary?.active_incidents ?? 0} />
       </Box>
 
-      <Box
-        mt={3}
-        display="grid"
-        gap={3}
-        gridTemplateColumns={{ xs: "1fr", lg: "1.5fr 1fr" }}
-        alignItems="flex-start"
-      >
-        <AdminIncidentPanel
-          incidents={incidents}
-          isLoading={incidentsLoading || statusSaving}
-          onStatusChange={handleStatusChange}
-        />
+      <Box mt={3} display="grid" gap={3} gridTemplateColumns={{ xs: "1fr", lg: "1.5fr 1fr" }}>
+        <IncidentAnalyticsPanel analytics={analytics} isLoading={analyticsLoading} />
         <Paper sx={{ bgcolor: "#050d16", p: 3 }}>
           <Typography variant="h6" mb={2}>
             Critical Watch
@@ -121,12 +118,20 @@ const AdminPortal = () => {
         gridTemplateColumns={{ xs: "1fr", lg: "1.5fr 1fr" }}
         alignItems="flex-start"
       >
+        <AdminIncidentPanel
+          incidents={incidents}
+          isLoading={incidentsLoading || statusSaving}
+          onStatusChange={handleStatusChange}
+        />
+        <NotificationBroadcastForm />
+      </Box>
+
+      <Box mt={3}>
         <UserManagementTable
           users={users}
           isLoading={usersLoading}
           onToggleActive={toggleUserActive}
         />
-        <NotificationBroadcastForm />
       </Box>
     </Box>
   );

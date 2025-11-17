@@ -85,6 +85,12 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 1. Try accessing `/incidents` without token → expect 401.
 2. Try `PATCH /incidents/{id}` as public user → expect 403.
 
+### 2.6 Intelligence & Analytics
+1. `GET /incidents/analytics/overview` (admin token) → verify counts by status/type/priority and average severity.
+2. `GET /incidents/analytics/clusters` → ensure clusters reflect geocoded incidents.
+3. `GET /incidents/recommendations/nearest-responders?latitude=9.01&longitude=38.74` → expect prioritized responder list.
+4. `PATCH /incidents/{id}?reclassify=true` → confirm severity/type recalculates.
+
 ---
 
 ## 3. Frontend Tests
@@ -109,7 +115,12 @@ Open `http://127.0.0.1:8000/docs` and run the following in order:
 2. Use the dropdown “Mark all read” control and confirm the unread badge clears.
 3. In the citizen portal, mark individual notifications read via the panel buttons.
 
-### 3.5 Mobile Responsiveness
+### 3.5 Intelligence Visuals
+1. Public/Police tables display severity scores and confidence percentages.
+2. Police portal “Nearest Responders” widget updates when incidents include coordinates.
+3. Admin portal “Intelligence Snapshot” reflects analytics API output.
+
+### 3.6 Mobile Responsiveness
 1. Use browser dev tools to simulate smaller screens and confirm layout adjusts (stat cards stack, map/table widths shrink).
 
 ---

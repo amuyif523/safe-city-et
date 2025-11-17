@@ -36,7 +36,9 @@ Final Project/
 - **RBAC** (`backend/app/core/deps.py`, `backend/app/models/user.py`):
   Role association table and decorator-based enforcement for admin, agency, and citizen scopes.
 - **Incident lifecycle** (`backend/app/routers/incidents.py`):
-  Role-aware listing, AI-assisted creation, status updates, notifications, and admin delete guard.
+  Role-aware listing, AI-assisted creation with severity/confidence scoring, analytics endpoints, and admin moderation tools.
+- **Incident intelligence**:
+  `/incidents/analytics/*` outputs status/type/priority summaries & clusters, and `/incidents/recommendations/nearest-responders` mocks responder proximity rankings for agency dashboards.
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
   Heuristic classifier/severity scorer, event logging, in-app notifications with unread tracking, and admin broadcast support.
 - **Admin summary endpoint** (`backend/app/routers/admin.py`):
@@ -80,7 +82,7 @@ Set `VITE_API_URL` to point at the FastAPI instance when wiring environments.
 | Role-Based Access Control | Done | Role assignments, decorators, protected front-end routes |
 | Incident Reporting & Management | Done | CRUD API, severity scoring, admin moderation |
 | Geospatial & Mapping | Done | Lat/lng storage and Leaflet-based incident map |
-| AI Intelligence Layer | Planned | Placeholder heuristics in `services/ai.py`, ready for ML drop-in |
+| AI Intelligence Layer | In Progress | Heuristic classifier outputs severity + confidence, analytics + responder endpoints live |
 | Multi-Agency Dashboards | Done | Dedicated portals for every persona |
 | Admin & Super Admin Controls | Done | Metrics endpoint and admin dashboard scaffolding |
 | Notifications & Communications | In Progress | In-app feed with unread tracking + admin broadcast; external channels next |
