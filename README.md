@@ -31,6 +31,7 @@ Final Project/
 
 - **Core foundations** (`backend/app/main.py`, `backend/app/core/config.py`, `backend/app/database.py`):
   FastAPI factory with CORS, router registration, JWT settings, and SQLite dev database (override `DATABASE_URL` for Postgres).
+- **Database migrations**: Alembic is configured (`alembic.ini`, `migrations/`); run `alembic upgrade head` to apply schema changes and `alembic revision --autogenerate -m "..."` for future updates.
 - **User management & auth** (`backend/app/routers/auth.py`, `backend/app/core/security.py`):
   Signup/login/me routes, bcrypt hashing, JWT issuance, plus future-ready refresh endpoint placeholder.
 - **RBAC** (`backend/app/core/deps.py`, `backend/app/models/user.py`):
@@ -41,6 +42,7 @@ Final Project/
   Admins/super-admins can filter and export audit logs via `/audit/logs`.
 - **Incident intelligence**:
   `/incidents/analytics/*` outputs status/type/priority summaries & clusters, and `/incidents/recommendations/nearest-responders` mocks responder proximity rankings for agency dashboards.
+- **Seed script**: `python scripts/seed.py --admin-email admin@example.com --admin-password Secure123!` populates default roles and a bootstrap admin account.
 - **AI + notifications + audit** (`backend/app/services/ai.py`, `backend/app/services/notifications.py`, `backend/app/services/audit.py`):
   Heuristic classifier/severity scorer, event logging, in-app notifications with unread tracking, and admin broadcast support.
 - **Admin summary endpoint** (`backend/app/routers/admin.py`):
