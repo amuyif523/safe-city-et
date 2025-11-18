@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 import AdminPortal from "./pages/admin/AdminPortal";
 import FirePortal from "./pages/fire/FirePortal";
 import MedicalPortal from "./pages/medical/MedicalPortal";
@@ -13,6 +14,7 @@ import PublicPortal from "./pages/public/PublicPortal";
 const App = () => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/register" element={<RegisterPage />} />
     <Route element={<ProtectedRoute />}>
       <Route element={<DashboardLayout />}>
         <Route index element={<PublicPortal />} />
