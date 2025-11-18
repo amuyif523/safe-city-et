@@ -65,7 +65,8 @@ Use `backend/.env.example` as the base for environment variables.
 - **Theme + layout shell** (`frontend/src/theme/index.ts`, `frontend/src/layouts/DashboardLayout.tsx`, `frontend/src/components/SidebarNav.tsx`): dark-mode command center aesthetic with sidebar, top bar, and nav aware of roles.
 - **Routing + guards** (`frontend/src/App.tsx`, `frontend/src/components/ProtectedRoute.tsx`): React Router v7 plus nested role-based gates per portal.
 - **Auth state + API client** (`frontend/src/stores/useAuthStore.ts`, `frontend/src/hooks/useAuth.ts`, `frontend/src/lib/api-client.ts`): Zustand-managed tokens, profile hydration, and axios wrapper for backend calls.
-- **Role portals** (`frontend/src/pages/*Portal.tsx`): Public, Police, Fire, Medical, Military, and Admin experiences with stats, tables, notifications, and React Leaflet maps. Agency dashboards now include responder queues, water-source inventories, hospital load indicators, threat feeds, and hotspot summaries driven by analytics endpoints.
+- **Role portals** (`frontend/src/pages/*Portal.tsx`): Public, Police, Fire, Medical, Military, and Admin experiences with stats, tables, notifications, and React Leaflet maps. Agency dashboards now include responder queues, water-source inventories, hospital load indicators, threat feeds, hotspot summaries, advanced search filters, and severity sliders driven by analytics endpoints.
+- **Profile & status UI**: Users can view their profile (`/profile`), see account state (active/disabled/suspended), and access password reset links from the login page. The layout also surfaces offline warnings when connectivity drops.
 - **UI building blocks** (`frontend/src/components/CommandCenterMap.tsx`, `frontend/src/components/IncidentTable.tsx`, `frontend/src/components/StatCard.tsx`): reusable widgets shared across portals.
 
 Run locally:

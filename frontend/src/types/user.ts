@@ -22,6 +22,8 @@ export interface User {
   is_disabled: boolean;
   is_suspended: boolean;
   suspension_reason?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Incident {

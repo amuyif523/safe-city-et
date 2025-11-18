@@ -202,7 +202,8 @@ This document explains how to validate the entire platform using Postman (or any
 1. Create military user; log in.
 2. Threat Intel panel lists high-severity incidents; hotspot list shows clusters.
 
-### 4.7 Notifications UI (top bar)
+### 4.7 Profile + Notifications
+- Click the avatar in the top bar → `/profile` shows account info, roles, and suspension badges.
 - Check unread badge updates as you mark notifications read.
 - Use “Mark all read” to reset badge.
 

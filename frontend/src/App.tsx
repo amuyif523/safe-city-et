@@ -10,6 +10,7 @@ import MedicalPortal from "./pages/medical/MedicalPortal";
 import MilitaryPortal from "./pages/military/MilitaryPortal";
 import PolicePortal from "./pages/police/PolicePortal";
 import PublicPortal from "./pages/public/PublicPortal";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 const App = () => (
   <Routes>
@@ -18,6 +19,7 @@ const App = () => (
     <Route element={<ProtectedRoute />}>
       <Route element={<DashboardLayout />}>
         <Route index element={<PublicPortal />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route
           element={<ProtectedRoute allowedRoles={["police", "admin", "super_admin"]} />}
         >

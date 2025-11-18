@@ -17,11 +17,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import useAuth from "../hooks/useAuth";
 import useNotifications from "../features/notifications/useNotifications";
 
 const TopBar = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -113,14 +115,16 @@ const TopBar = () => {
         </Menu>
         {user && (
           <>
-            <Avatar sx={{ bgcolor: "#0aa8ff" }}>
-              {user.full_name
-                .split(" ")
-                .map((part) => part[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
-            </Avatar>
+            <IconButton onClick={() => navigate("/profile")} sx={{ p: 0 }}>
+              <Avatar sx={{ bgcolor: "#0aa8ff" }}>
+                {user.full_name
+                  .split(" ")
+                  .map((part) => part[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </Avatar>
+            </IconButton>
             <Box textAlign="right">
               <Typography fontWeight={600}>{user.full_name}</Typography>
               <Typography variant="caption" color="#8ba3c7">
@@ -132,9 +136,9 @@ const TopBar = () => {
             </Button>
           </>
         )}
-      </Box>
-    </Box>
-  );
+     </Box>
+   </Box>
+ );
 };
 
 export default TopBar;

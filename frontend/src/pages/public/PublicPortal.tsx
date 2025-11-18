@@ -5,6 +5,7 @@ import {
   Paper,
   Skeleton,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -15,8 +16,10 @@ import IncidentForm from "../../components/IncidentForm";
 import IncidentTable from "../../components/IncidentTable";
 import NotificationsPanel from "../../components/NotificationsPanel";
 import StatCard from "../../components/StatCard";
+import HotspotPanel from "../../components/HotspotPanel";
 import useIncidents from "../../features/incidents/useIncidents";
 import useNotifications from "../../features/notifications/useNotifications";
+import useIncidentClusters from "../../features/incidents/useIncidentClusters";
 
 const PublicPortal = () => {
   const { incidents, isLoading, refetch } = useIncidents();
@@ -26,9 +29,11 @@ const PublicPortal = () => {
     refetch: refetchNotifications,
     markAsRead,
   } = useNotifications();
+  const { clusters } = useIncidentClusters();
   const [statusFilter, setStatusFilter] = useState<
     "all" | "open" | "acknowledged" | "in_progress" | "resolved"
   >("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const stats = useMemo(() => {
     const openCount = incidents.filter((incident) => incident.status !== "resolved").length;
@@ -41,9 +46,15 @@ const PublicPortal = () => {
   }, [incidents]);
 
   const filteredIncidents = useMemo(() => {
-    if (statusFilter === "all") return incidents;
-    return incidents.filter((incident) => incident.status === statusFilter);
-  }, [incidents, statusFilter]);
+    return incidents.filter((incident) => {
+      const matchesStatus = statusFilter === "all" || incident.status === statusFilter;
+      const matchesSearch =
+        searchTerm.trim().length === 0 ||
+        incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        incident.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesStatus && matchesSearch;
+    });
+  }, [incidents, statusFilter, searchTerm]);
 
   const handleRefresh = async () => {
     await Promise.all([refetch(), refetchNotifications()]);
@@ -74,7 +85,13 @@ const PublicPortal = () => {
           Refresh
         </Button>
       </Stack>
-
+      <TextField
+        placeholder="Search incidents by keyword..."
+        value={searchTerm}
+        onChange={(event) => setSearchTerm(event.target.value)}
+        fullWidth
+        sx={{ mb: 2, maxWidth: 480 }}
+      />
       <Box
         display="grid"
         gap={3}
@@ -136,6 +153,9 @@ const PublicPortal = () => {
             No incidents found for the selected filter.
           </Typography>
         )}
+      </Box>
+      <Box mt={3}>
+        <HotspotPanel clusters={clusters} />
       </Box>
     </Box>
   );
