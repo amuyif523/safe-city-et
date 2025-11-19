@@ -5,12 +5,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.core import security
+from app.core.config import settings
 from app.core.deps import get_current_user
 from app.database import get_session
 from app.models.user import Role, User
 from app.schemas import auth as auth_schema
 from app.schemas.user import UserCreate, UserRead
-from app.services import audit, token_service
+from app.services import audit, notifications, token_service
 from app.services.integrations import EmailAdapter
 from app.services.rate_limit import LoginRateLimiter
 
@@ -29,19 +30,36 @@ def _get_or_create_role(db: Session, role_name: str) -> Role:
 
 
 @router.post("/signup", response_model=UserRead, status_code=status.HTTP_201_CREATED)
-def signup(user_in: UserCreate, db: Session = Depends(get_session)):
+def signup(user_in: UserCreate, request: Request, db: Session = Depends(get_session)):
     existing = db.query(User).filter_by(email=user_in.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered.")
+
+    invite_codes = (
+        [code.strip() for code in settings.registration_invite_codes.split(",")]
+        if settings.registration_invite_codes
+        else []
+    )
+    requested_roles = user_in.roles or ["public"]
+    assigned_roles: list[str] = []
+
+    if set(requested_roles) == {"public"}:
+        assigned_roles = ["public"]
+    else:
+        if not user_in.invite_code or user_in.invite_code not in invite_codes:
+            assigned_roles = ["public"]
+        else:
+            assigned_roles = requested_roles
 
     user = User(
         full_name=user_in.full_name,
         email=user_in.email,
         phone=user_in.phone,
         hashed_password=security.get_password_hash(user_in.password),
+        desired_roles=",".join(requested_roles) if requested_roles else None,
+        is_email_verified=not settings.email_verification_required,
     )
-    role_names = user_in.roles or ["public"]
-    user.roles = [_get_or_create_role(db, role) for role in role_names]
+    user.roles = [_get_or_create_role(db, role) for role in assigned_roles]
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -51,8 +69,16 @@ def signup(user_in: UserCreate, db: Session = Depends(get_session)):
         actor_id=user.id,
         target_type="user",
         target_id=user.id,
-        details=f"Roles: {', '.join(role_names)}",
+        details=f"Assigned roles: {', '.join(assigned_roles)}; requested: {', '.join(requested_roles)}",
     )
+    if settings.email_verification_required:
+        token = token_service.create_email_verification_token(db, user.id)
+        verification_link = f"{request.base_url}verify-email?token={token}"
+        email_adapter.send(
+            user.email,
+            "Verify your SafeCity account",
+            f"Use the link to verify your account:\n{verification_link}",
+        )
     return user
 
 
@@ -67,6 +93,8 @@ def login(
     user = db.query(User).filter_by(email=form_data.username).first()
     if not user or not security.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect email or password.")
+    if not user.is_email_verified and settings.email_verification_required:
+        raise HTTPException(status_code=403, detail="Please verify your email before signing in.")
     if not user.is_active or user.is_disabled:
         raise HTTPException(status_code=403, detail="Account disabled. Contact administrator.")
     if user.is_suspended:
@@ -140,3 +168,19 @@ def reset_password(body: auth_schema.PasswordResetConfirm, db: Session = Depends
         target_id=user.id,
     )
     return {"message": "Password updated successfully."}
+
+
+@router.post("/verify-email")
+def verify_email(payload: auth_schema.RefreshRequest, db: Session = Depends(get_session)):
+    user = token_service.consume_email_verification_token(db, payload.refresh_token)
+    user.is_email_verified = True
+    db.add(user)
+    db.commit()
+    audit.log_event(
+        db,
+        action="email_verified",
+        actor_id=user.id,
+        target_type="user",
+        target_id=user.id,
+    )
+    return {"message": "Email verified successfully."}

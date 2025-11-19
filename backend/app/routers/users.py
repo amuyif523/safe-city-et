@@ -27,8 +27,14 @@ def _assign_roles(db: Session, role_names: List[str]) -> List[Role]:
 @router.get(
     "/", response_model=List[UserRead], dependencies=[Depends(require_roles("admin", "super_admin"))]
 )
-def list_users(db: SessionDep):
-    return db.query(User).all()
+def list_users(
+    db: SessionDep,
+    pending_only: bool | None = None,
+):
+    query = db.query(User)
+    if pending_only:
+        query = query.filter(User.desired_roles.isnot(None))
+    return query.all()
 
 
 @router.post(

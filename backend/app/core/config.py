@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     notification_email_enabled: bool = Field(False, alias="NOTIFICATION_EMAIL_ENABLED")
     notification_email_from: str | None = Field(None, alias="NOTIFICATION_EMAIL_FROM")
     notification_sms_enabled: bool = Field(False, alias="NOTIFICATION_SMS_ENABLED")
+    registration_invite_codes: str | None = Field(
+        None,
+        alias="REGISTRATION_INVITE_CODES",
+        description="Comma-separated list of valid invite codes for agency roles.",
+    )
+    email_verification_required: bool = Field(False, alias="EMAIL_VERIFICATION_REQUIRED")
 
     class Config:
         env_file = ".env"

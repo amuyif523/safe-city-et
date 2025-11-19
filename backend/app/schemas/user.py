@@ -20,6 +20,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str = Field(min_length=8)
     roles: List[str] | None = None
+    invite_code: str | None = None
 
 
 class UserUpdate(BaseModel):
@@ -38,6 +39,8 @@ class UserRead(UserBase):
     is_disabled: bool
     is_suspended: bool
     suspension_reason: str | None = None
+    is_email_verified: bool
+    desired_roles: str | None = None
     created_at: datetime
     updated_at: datetime
     roles: List[RoleRead] = []

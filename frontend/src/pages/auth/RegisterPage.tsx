@@ -3,6 +3,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Link,
   Paper,
   Stack,
@@ -21,6 +22,8 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<"public" | "responder">("public");
+  const [inviteCode, setInviteCode] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -40,7 +43,8 @@ const RegisterPage = () => {
         email,
         phone,
         password,
-        roles: ["public"],
+        roles: selectedRole === "public" ? ["public"] : ["public", "police"],
+        invite_code: selectedRole === "public" ? undefined : inviteCode || undefined,
       });
       setSuccess("Registration complete! Redirecting to login…");
       setTimeout(() => {
@@ -128,6 +132,32 @@ const RegisterPage = () => {
               onChange={(event) => setPhone(event.target.value)}
               fullWidth
             />
+            <Typography variant="caption" color="#8ba3c7">
+              Choose your role:
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <Chip
+                label="Citizen Reporter"
+                color={selectedRole === "public" ? "primary" : "default"}
+                onClick={() => setSelectedRole("public")}
+                clickable
+              />
+              <Chip
+                label="Agency Responder"
+                color={selectedRole === "responder" ? "primary" : "default"}
+                onClick={() => setSelectedRole("responder")}
+                clickable
+              />
+            </Stack>
+            {selectedRole === "responder" && (
+              <TextField
+                label="Agency Invite Code"
+                value={inviteCode}
+                onChange={(event) => setInviteCode(event.target.value)}
+                required
+                helperText="Enter the invite code provided by your agency administrator."
+              />
+            )}
             <TextField
               label="Password"
               type="password"

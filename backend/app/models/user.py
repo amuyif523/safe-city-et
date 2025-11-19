@@ -38,6 +38,8 @@ class User(Base):
     is_disabled: Mapped[bool] = mapped_column(Boolean, default=False)
     is_suspended: Mapped[bool] = mapped_column(Boolean, default=False)
     suspension_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    desired_roles: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
